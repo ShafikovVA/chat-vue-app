@@ -14,6 +14,7 @@ onUpdated(() => {
 
 <template>
     <div ref="messageList" class="message-list">
+        {{ messages.length === 0 ? 'Начните общение' : '' }}
         <Message v-for="message in messages"
             :self="message.self"
             :time="message.time"

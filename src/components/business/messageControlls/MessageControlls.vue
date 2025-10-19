@@ -2,21 +2,23 @@
 import Textarea from '../../ui/textarea/Textarea.vue';
 import { ref } from 'vue';
 
-const { onSubmit } = defineProps<{
+const { onSubmit, loading } = defineProps<{
     onSubmit: (text: string) => void;
+    loading?: boolean,
 }>();
 
 const form = ref();
 const messageText = ref<string>('');
 
-const handleSubmit = (e: SubmitEvent) => {
-    e.preventDefault();
 
-   onSubmit(messageText.value);
-   messageText.value = "";
+const handleSubmit = async (e: SubmitEvent) => {
+    e.preventDefault();
+    if(loading) return;
+    onSubmit(messageText.value);
+    messageText.value = "";
 }
 
-const handlePressEnter = () => {
+const handlePressEnter = async () => {
     onSubmit(messageText.value);
     messageText.value = "";
 }
@@ -30,12 +32,18 @@ const handlePressEnter = () => {
         class="message-controlls" 
         v-on:submit="handleSubmit" 
     >
-        <Textarea :onPressEnter="handlePressEnter" v-model="messageText"></Textarea>
+        <Textarea 
+            :onPressEnter="handlePressEnter" 
+            :disabled="loading" 
+            v-model="messageText"
+        >
+        </Textarea>
         <button 
             class="message-controlls__submit" 
             type="submit"
+            :disabled="loading"
         >
-            Send
+            {{ loading ? 'Загрузка' : 'Отправить'}}
         </button>
     </form>    
 </template>
@@ -51,6 +59,8 @@ const handlePressEnter = () => {
     }
     .message-controlls__submit {
         @apply bg-gray-100 rounded-xl px-2 py-1 w-32 text-base
-         cursor-pointer hover:bg-blue-200 transition-all h-10
+         cursor-pointer hover:not-[disabled]:bg-blue-200 transition-all h-10 disabled:text-gray-400
+         disabled:cursor-no-drop
     }
+ 
 </style>

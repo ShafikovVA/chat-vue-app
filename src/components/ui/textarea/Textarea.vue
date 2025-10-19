@@ -2,7 +2,7 @@
     import type { ITextareaProps } from './textarea.type';
     import { useTemplateRef, watch, onMounted, nextTick } from 'vue';
 
-    const { modelValue, className, onPressEnter } = defineProps<ITextareaProps>();
+    const { modelValue, className, onPressEnter, disabled } = defineProps<ITextareaProps>();
     const emit = defineEmits(['update:modelValue']);
     const MAX_HEIGHT = 300;
     const MIN_HEIGHT = 40;
@@ -56,6 +56,7 @@
             @input="handleInput"
             @keypress="handleKeyPress"
             rows="1"
+            :disabled="disabled"
             ></textarea>
 </template>
 
@@ -63,6 +64,7 @@
     @import 'tailwindcss';
     
     textarea {
-        @apply flex-1 text-lg bg-white rounded-xl px-3 py-1 transition-all resize-none box-border
+        @apply flex-1 text-lg bg-white rounded-xl px-3 py-1 transition-all resize-none box-border 
+        disabled:text-gray-400 disabled:cursor-no-drop disabled:bg-gray-100
     }
 </style>

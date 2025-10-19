@@ -3,44 +3,43 @@ import { ref } from 'vue';
 import type { IMessageProps } from '../message/message.type';
 import MessageControlls from '../messageControlls/MessageControlls.vue';
 import MessageList from '../messageList/MessageList.vue';
+import { GoogleGenAI } from "@google/genai";
 
-const messages = ref<IMessageProps[]>([
-    {
-        time: new Date(),
-        text: 'привет'
-    },
-    {
-        time: new Date(),
-        self: true,
-        text: 'привет'
-    },
-    {
-        time: new Date(),
-        text: 'Как дела?'
-    },
-    {
-        time: new Date(),
-        self: true,
-        text: 'Да ок'
-    },
-    {
-        time: new Date(),
-        self: true,
-        text: 'Ты как?'
-    },
-    {
-        time: new Date(),
-        text: 'Да ок'
-    },
-]);
+const ai = new GoogleGenAI({
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY,
+});
 
-const onSubmit = (message: string) => {
-  if(message === '') return;
-  messages.value.push({
-    time: new Date(),
-    self: true,
-    text: message,
-  });
+const loading = ref<boolean>(false);
+
+const messages = ref<IMessageProps[]>([]);
+
+const onSubmit = async (message: string) => {
+    if(message === '') return;
+
+    messages.value.push({
+        time: new Date(),
+        self: true,
+        text: message,
+    });
+
+    loading.value = true;
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: message,
+    }).finally(() => {
+        loading.value = false;
+    });
+    
+    console.log(response.text);
+
+    if(response) {
+        messages.value.push({
+        time: new Date(),
+        text: response.text ?? '',
+    });
+    }
+
+ 
 }
 
 </script>
@@ -48,7 +47,7 @@ const onSubmit = (message: string) => {
 <template>
     <div class="chat">
         <MessageList :messages="messages" />
-        <MessageControlls :onSubmit="onSubmit" />
+        <MessageControlls :onSubmit="onSubmit" :loading="loading" />
     </div>
 </template>
 
