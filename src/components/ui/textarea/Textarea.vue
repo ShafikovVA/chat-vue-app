@@ -48,7 +48,8 @@
 <template>
   <textarea 
             ref="textareaRef"
-            class="message-controlls__text {{ className }}" 
+            class="message-controlls__text"
+            :class="className"
             name="message"
             placeholder="Type message" 
             :value="modelValue"
