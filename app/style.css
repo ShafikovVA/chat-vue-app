@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-gray-200;
+}
+
+#__nuxt {
+  @apply w-full flex justify-center pt-14 pb-14 h-screen;
+}
